@@ -424,7 +424,7 @@
 .ip-rule4 li:first-child{border-top:none}
 .ip-rule4 li::before{content:counter(r4);position:absolute;left:0;top:5px;width:22px;height:22px;border-radius:50%;background:#e87ba4;color:#0b1120;font-weight:900;font-size:12px;text-align:center;line-height:22px}
 .ip-rule4 li b{color:#fff}
-body.ele-open .map-legend{bottom:226px}@media (max-width:899px){body.ele-open .map-legend,body.ele-open .scale-bar-container{display:none}}body.ele-open .scale-bar-container{bottom:176px}body.ele-open .stage-info-pill{bottom:176px}
+body.ele-open .map-legend{bottom:226px}@media (max-width:899px){.map-legend,.scale-bar-container{display:none!important}}body.ele-open .scale-bar-container{bottom:176px}body.ele-open .stage-info-pill{bottom:176px}
 .ip-lesson{background:linear-gradient(135deg,rgba(239,68,68,.22),rgba(239,68,68,.06));border:2px solid #ef4444;border-radius:12px;padding:10px 12px;margin:16px 0 8px;font-size:12.5px;color:#fee2e2}
 .ip-lesson b:first-child{display:block;font-size:14.5px;color:#fca5a5;margin-bottom:4px}.ip-lesson b{color:#fff}
 .ip-d1{background:linear-gradient(135deg,rgba(6,182,212,.22),rgba(6,182,212,.06));border:2px solid #06b6d4;border-radius:12px;padding:10px 12px;margin:16px 0 8px;font-size:12.5px;color:#cffafe}
@@ -443,7 +443,7 @@ body.ele-open .map-legend{bottom:226px}@media (max-width:899px){body.ele-open .m
   <div class="top-title-row">
     <div class="top-title">
       <span>戈21 全賽道離線戰術地圖</span>
-      <span class="top-badge" id="statusBadge">100% 離線可用</span>
+      
     </div>
     <div style="font-size: 11px; color: var(--emerald-light); font-weight: 700;" id="stageSummary">全程 (10/1–10/4) - 120.1K</div>
   </div>
@@ -1594,7 +1594,7 @@ window.fitCurrentStage = fitCurrentStage = function(){
   const lg = document.querySelector('.map-legend');
   const lgH = (lg && getComputedStyle(lg).display !== 'none') ? lg.offsetHeight + 16 : 0;
   const bottom = (dr.classList.contains('open') ? dr.offsetHeight : 0) + (mob ? 16 : 40) + lgH;
-  const left = mob ? 16 : 70, right = 66, top = topBar + (mob ? 50 : 40);
+  const left = mob ? 34 : 70, right = 66, top = topBar + (mob ? 50 : 40);
   const uw = Math.max(80, view.width - left - right), uh = Math.max(80, view.height - top - bottom);
   view.scale = Math.min(uw / Math.max(maxX - minX, 0.1), uh / Math.max(maxY - minY, 0.1), 60);
   const ucx = left + uw / 2, ucy = top + uh / 2;
@@ -1661,10 +1661,14 @@ window.fitCurrentStage = fitCurrentStage = function(){
   window.toggleElevationDrawer = toggleElevationDrawer = function(){ origToggle(); document.body.classList.toggle('ele-open', isElevationOpen); setTimeout(fitCurrentStage, 280); };
   const origSel = selectStage;
   window.selectStage = selectStage = function(s){ eleHover = null; origSel(s); };
-  // open by default
-  isElevationOpen = true;
-  document.getElementById('eleDrawer').classList.add('open');
-  document.body.classList.add('ele-open');
+  // 筆電預設開啟；手機（窄螢幕或觸控）預設收起，避免和下方建議欄混在一起
+  const IS_MOBILE = window.matchMedia('(max-width: 899px)').matches;
+  document.body.classList.toggle('is-mobile', IS_MOBILE);
+  if (!IS_MOBILE) {
+    isElevationOpen = true;
+    document.getElementById('eleDrawer').classList.add('open');
+    document.body.classList.add('ele-open');
+  }
   window.addEventListener('load', () => setTimeout(() => { updateElevationProfile(); fitCurrentStage(); }, 80));
   window.addEventListener('resize', () => { updateElevationProfile(); fitCurrentStage(); });
 })();
